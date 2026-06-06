@@ -32,7 +32,7 @@
   --transition: 220ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.light-mode {
+body.light-mode {
   --bg: #eef3fb;
   --bg-2: #dbe7f7;
   --surface: rgba(255, 255, 255, 0.82);
@@ -76,6 +76,12 @@ body {
   overflow-x: hidden;
   overflow-y: auto;
   position: relative;
+}
+
+.page-wrap {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
 .bg-orb {
@@ -128,7 +134,7 @@ body {
   display: grid;
   grid-template-columns: 360px 1fr;
   gap: 24px;
-  align-items: stretch;
+  align-items: start;
 }
 
 .glass {
@@ -151,6 +157,8 @@ body {
   gap: 18px;
   max-height: calc(100vh - 48px);
   overflow-y: auto;
+  position: sticky;
+  top: 24px;
 }
 
 .brand-row {
@@ -281,7 +289,8 @@ label,
   display: grid;
   grid-template-rows: auto 1fr auto;
   overflow: hidden;
-  min-height: calc(100vh - 48px);
+  height: calc(100vh - 48px);
+  min-height: 0;
 }
 
 .chat-header {
@@ -343,7 +352,6 @@ label,
 
 .chat-box {
   min-height: 0;
-  height: 100%;
   padding: 24px;
   overflow-y: auto;
   overflow-x: hidden;
@@ -412,7 +420,8 @@ textarea {
   width: 100%;
   min-height: 44px;
   max-height: 120px;
-  resize: vertical;
+  resize: none;
+  overflow-y: auto;
   border: 1px solid var(--border);
   border-radius: 14px;
   background: rgba(255,255,255,0.06);
@@ -495,18 +504,16 @@ textarea:focus {
 }
 
 .site-footer {
+  position: relative;
+  z-index: 1;
   width: 100%;
   margin-top: 18px;
-  padding: 14px 24px;
+  padding: 14px 24px 20px;
   text-align: center;
   color: var(--muted);
   font-size: 0.92rem;
   background: transparent;
   border-top: 1px solid rgba(255, 255, 255, 0.22);
-}
-
-.site-footer:hover {
-  transform: translateY(-2px);
 }
 
 .site-footer p {
@@ -518,34 +525,34 @@ textarea:focus {
   font-weight: 700;
 }
 
-.light-mode body {
+body.light-mode {
   background:
     radial-gradient(circle at 12% 18%, rgba(14, 165, 233, 0.10), transparent 20%),
     radial-gradient(circle at 88% 12%, rgba(139, 92, 246, 0.10), transparent 24%),
     linear-gradient(135deg, #eef3fb, #dbe7f7);
 }
 
-.light-mode .bg-grid {
+body.light-mode .bg-grid {
   background-image:
     linear-gradient(rgba(15, 23, 42, 0.05) 1px, transparent 1px),
     linear-gradient(90deg, rgba(15, 23, 42, 0.05) 1px, transparent 1px);
 }
 
-.light-mode .glass {
+body.light-mode .glass {
   background: rgba(255, 255, 255, 0.72);
   border: 1px solid rgba(15, 23, 42, 0.10);
   box-shadow: 0 18px 50px rgba(15, 23, 42, 0.10);
 }
 
-.light-mode .sidebar {
+body.light-mode .sidebar {
   background: linear-gradient(180deg, rgba(255,255,255,0.82), rgba(248,250,255,0.72));
 }
 
-.light-mode .chat-panel {
+body.light-mode .chat-panel {
   background: linear-gradient(180deg, rgba(255,255,255,0.78), rgba(245,248,255,0.74));
 }
 
-.light-mode .glass-card {
+body.light-mode .glass-card {
   background: rgba(255, 255, 255, 0.78);
   border: 1px solid rgba(15, 23, 42, 0.08);
   box-shadow:
@@ -553,32 +560,32 @@ textarea:focus {
     inset 0 1px 0 rgba(255,255,255,0.6);
 }
 
-.light-mode .chat-header,
-.light-mode .composer {
+body.light-mode .chat-header,
+body.light-mode .composer {
   background: rgba(255, 255, 255, 0.45);
 }
 
-.light-mode .chat-box {
+body.light-mode .chat-box {
   background: linear-gradient(180deg, rgba(255,255,255,0.08), rgba(103,80,164,0.03));
 }
 
-.light-mode textarea {
+body.light-mode textarea {
   background: rgba(255, 255, 255, 0.88);
   border: 1px solid rgba(15, 23, 42, 0.12);
 }
 
-.light-mode .chip {
+body.light-mode .chip {
   background: rgba(255, 255, 255, 0.85);
   border: 1px solid rgba(15, 23, 42, 0.10);
 }
 
-.light-mode .status-pill {
+body.light-mode .status-pill {
   color: #166534;
   background: rgba(34, 197, 94, 0.10);
   border: 1px solid rgba(34, 197, 94, 0.18);
 }
 
-.light-mode .site-footer {
+body.light-mode .site-footer {
   border-top: 1px solid rgba(15, 23, 42, 0.14);
 }
 
@@ -638,13 +645,15 @@ textarea:focus {
     grid-template-columns: 1fr;
   }
 
-  .sidebar,
-  .chat-panel {
+  .sidebar {
+    position: static;
     max-height: none;
+    overflow: visible;
   }
 
   .chat-panel {
-    min-height: 80vh;
+    height: 78vh;
+    min-height: 78vh;
   }
 }
 
@@ -654,7 +663,10 @@ textarea:focus {
     gap: 14px;
   }
 
-  .sidebar,
+  .sidebar {
+    padding: 20px;
+  }
+
   .chat-header,
   .chat-box,
   .composer {
@@ -692,4 +704,56 @@ textarea:focus {
     transition: none !important;
     scroll-behavior: auto !important;
   }
+}
+
+/* Firefox */
+.chat-box,
+.sidebar,
+textarea {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.18) transparent;
+}
+
+/* Chrome, Edge, Safari */
+.chat-box::-webkit-scrollbar,
+.sidebar::-webkit-scrollbar,
+textarea::-webkit-scrollbar {
+  width: 6px;
+}
+
+.chat-box::-webkit-scrollbar-track,
+.sidebar::-webkit-scrollbar-track,
+textarea::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.chat-box::-webkit-scrollbar-thumb,
+.sidebar::-webkit-scrollbar-thumb,
+textarea::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.18);
+  border-radius: 999px;
+}
+
+.chat-box::-webkit-scrollbar-thumb:hover,
+.sidebar::-webkit-scrollbar-thumb:hover,
+textarea::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.28);
+}
+
+body.light-mode .chat-box,
+body.light-mode .sidebar,
+body.light-mode textarea {
+  scrollbar-color: rgba(15, 23, 42, 0.22) transparent;
+}
+
+body.light-mode .chat-box::-webkit-scrollbar-thumb,
+body.light-mode .sidebar::-webkit-scrollbar-thumb,
+body.light-mode textarea::-webkit-scrollbar-thumb {
+  background: rgba(15, 23, 42, 0.22);
+}
+
+body.light-mode .chat-box::-webkit-scrollbar-thumb:hover,
+body.light-mode .sidebar::-webkit-scrollbar-thumb:hover,
+body.light-mode textarea::-webkit-scrollbar-thumb:hover {                
+  background: rgba(15, 23, 42, 0.34);
 }
